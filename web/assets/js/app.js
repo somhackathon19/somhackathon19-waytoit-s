@@ -163,6 +163,28 @@ $.getJSON("data/boroughs.geojson", function (data) {
   boroughs.addData(data);
 });
 
+var lavabos = L.geoJson(null, {
+  style: function (feature) {
+    return {
+      color: "black",
+      fill: false,
+      opacity: 1,
+      clickable: false
+    };
+  },
+  onEachFeature: function (feature, layer) {
+    lavabossearch.push({
+      name: layer.feature.properties.BoroName,
+      source: "lavabos",
+      id: L.stamp(layer),
+      bounds: layer.getBounds()
+    });
+  }
+});
+$.getJSON("data/lavabos.geojson", function (data) {
+  lavabos.addData(data);
+});
+
 //Create a color dictionary based off of subway route_id
 var subwayColors = {"1":"#ff3135", "2":"#ff3135", "3":"ff3135", "4":"#009b2e",
     "5":"#009b2e", "6":"#009b2e", "7":"#ce06cb", "A":"#fd9a00", "C":"#fd9a00",
@@ -307,8 +329,8 @@ $.getJSON("data/DOITT_MUSEUM_01_13SEPT2010.geojson", function (data) {
 });
 
 map = L.map("map", {
-  zoom: 10,
-  center: [40.702222, -73.979378],
+  zoom: 14,
+  center: [41.541637, 2.437576],
   layers: [cartoLight, boroughs, markerClusters, highlight],
   zoomControl: false,
   attributionControl: false
@@ -493,7 +515,7 @@ $(document).one("ajaxStop", function () {
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     remote: {
-      url: "http://api.geonames.org/searchJSON?username=bootleaf&featureClass=P&maxRows=5&countryCode=US&name_startsWith=%QUERY",
+      url: "https://master.apis.dev.openstreetmap.org/",
       filter: function (data) {
         return $.map(data.geonames, function (result) {
           return {

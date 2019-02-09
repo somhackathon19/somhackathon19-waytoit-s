@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#000000">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>BootLeaf</title>
+    <title>Multimaps</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css">
     <link rel="stylesheet" href="assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css">
     <link rel="stylesheet" href="assets/css/app.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
     <link rel="apple-touch-icon" sizes="76x76" href="assets/img/favicon-76.png">
     <link rel="apple-touch-icon" sizes="120x120" href="assets/img/favicon-120.png">
@@ -28,6 +29,7 @@
   </head>
 
   <body>
+    <!--Navigator amb els moduls i el buscador-->
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -35,36 +37,17 @@
             <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
             <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
           </div>
-          <a class="navbar-brand" href="#">BootLeaf</a>
+          <a class="navbar-brand" href="#">Multimaps</a>
         </div>
         <div class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" role="search">
             <div class="form-group has-feedback">
-                <input id="searchbox" type="text" placeholder="Search" class="form-control">
+                <input id="searchbox" type="text" placeholder="Buscar" class="form-control">
                 <span id="searchicon" class="fa fa-search form-control-feedback"></span>
             </div>
           </form>
           <ul class="nav navbar-nav">
-            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;About</a></li>
-            <li class="dropdown">
-              <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Tools <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="full-extent-btn"><i class="fa fa-arrows-alt"></i>&nbsp;&nbsp;Zoom To Full Extent</a></li>
-                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="legend-btn"><i class="fa fa-picture-o"></i>&nbsp;&nbsp;Show Legend</a></li>
-                <li class="divider hidden-xs"></li>
-                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn"><i class="fa fa-user"></i>&nbsp;&nbsp;Login</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-                <a class="dropdown-toggle" id="downloadDrop" href="#" role="button" data-toggle="dropdown"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Download <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="data/boroughs.geojson" download="boroughs.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Boroughs</a></li>
-                  <li><a href="data/subways.geojson" download="subways.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Subway Lines</a></li>
-                  <li><a href="data/DOITT_THEATER_01_13SEPT2010.geojson" download="theaters.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Theaters</a></li>
-                  <li><a href="data/DOITT_MUSEUM_01_13SEPT2010.geojson" download="museums.geojson" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Museums</a></li>
-                </ul>
-            </li>
-            <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;POI List</a></li>
+            <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;Mòduls</a></li>
           </ul>
         </div><!--/.navbar-collapse -->
       </div>
@@ -75,35 +58,48 @@
         <div class="sidebar-wrapper">
           <div class="panel panel-default" id="features">
             <div class="panel-heading">
-              <h3 class="panel-title">Points of Interest
+              <h3 class="panel-title">Mòduls
               <button type="button" class="btn btn-xs btn-default pull-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button></h3>
             </div>
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-xs-8 col-md-8">
-                  <input type="text" class="form-control search" placeholder="Filter" />
-                </div>
-                <div class="col-xs-4 col-md-4">
-                  <button type="button" class="btn btn-primary pull-right sort" data-sort="feature-name" id="sort-btn"><i class="fa fa-sort"></i>&nbsp;&nbsp;Sort</button>
-                </div>
+            <div class="panel-body">                
+              <div id="checkboxes">
+                  <label class="modul">Necessitats</label><input type="checkbox">
+                  <ul class="submodul">
+                    <li><input type="checkbox">Lavabos</li>
+                    <li><input type="checkbox">Fonts</li>
+                    <li><input type="checkbox">Papereres</li>
+                    <li><input type="checkbox">Punts recollida brossa</li>
+                    <li><input type="checkbox">Màquines expenedores</li>
+                  </ul>
               </div>
+              <div id="checkboxes">
+                  <label class="modul">Llocs d'interès</label><input type="checkbox">
+                  <ul class="submodul">
+                    <li><input type="checkbox">Parcs</li>
+                    <li><input type="checkbox">Museus</li>
+                    <li><input type="checkbox">Monuments</li>
+                    <li><input type="checkbox">Altres llocs culturals</li>
+                    <li><input type="checkbox">Altres llocs culturals</li>
+                  </ul>
+              </div>
+              <div id="checkboxes">
+                  <label class="modul">Esports</label><input type="checkbox">
+                  <ul class="submodul">
+                    <li><input type="checkbox">Pistes exteriors esportives</li>
+                    <li><input type="checkbox">Espais d'exercici públic</li>
+                  </ul>
+              </div>
+              <div id="checkboxes">
+                  <label class="modul">Esdeveniments</label><input type="checkbox">
+                  <ul class="submodul">
+                    <li><input type="checkbox">Festes majors</li>
+                    <li><input type="checkbox">Programes de l'ajuntament</li>
+                    <li><input type="checkbox">Esdeveniments annuals</li>
+                    <li><input type="checkbox">Esdeveniments puntuals</li>
+                  </ul>
+              </div>               
             </div>
-            <div class="sidebar-table">
-              <table class="table table-hover" id="feature-list">
-                <thead class="hidden">
-                  <tr>
-                    <th>Icon</th>
-                  <tr>
-                  <tr>
-                    <th>Name</th>
-                  <tr>
-                  <tr>
-                    <th>Chevron</th>
-                  <tr>
-                </thead>
-                <tbody class="list"></tbody>
-              </table>
-            </div>
+
           </div>
         </div>
       </div>
