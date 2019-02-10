@@ -5,7 +5,6 @@ html, body, #container {
 }
 body {
   padding-top: 50px;
-  font-family: 'Roboto', sans-serif;
 }
 input[type="radio"], input[type="checkbox"] {
   margin: 0;
@@ -175,27 +174,4 @@ input[type="radio"], input[type="checkbox"] {
   .leaflet-control-container {
     display: none !important;
   }
-}
-.modul {
-  font-size: 20px;
-  margin: 2px;
-  font-weight: bold;
-
-  padding:4px;
-}
-.submodul{
-  font-size: 16px;
-  font-weight: 100;
-}
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-label {
-  margin:  0px;
-  padding: 0px;
-}
-.sub {
- text-decoration: underline; 
 }

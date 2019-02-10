@@ -121,7 +121,16 @@ var cartoLight = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net
   maxZoom: 19,
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
 });
-
+var usgsImagery = L.layerGroup([L.tileLayer("http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}", {
+  maxZoom: 15,
+}), L.tileLayer.wms("http://raster.nationalmap.gov/arcgis/services/Orthoimagery/USGS_EROS_Ortho_SCALE/ImageServer/WMSServer?", {
+  minZoom: 16,
+  maxZoom: 19,
+  layers: "0",
+  format: 'image/jpeg',
+  transparent: true,
+  attribution: "Aerial Imagery courtesy USGS"
+})]);
 
 /* Overlay Layers */
 var highlight = L.geoJson(null);
@@ -153,51 +162,6 @@ var boroughs = L.geoJson(null, {
 $.getJSON("data/boroughs.geojson", function (data) {
   boroughs.addData(data);
 });
-
-var lavabos = L.geoJson(null, {
-  style: function (feature) {
-    return {
-      color: "black",
-      fill: false,
-      opacity: 1,
-      clickable: false
-    };
-  },
-  onEachFeature: function (feature, layer) {
-    lavabosSearch.push({
-      name: layer.feature.properties.BoroName,
-      source: "lavabos",
-      id: L.stamp(layer),
-      bounds: layer.getBounds()
-    });
-  }
-});
-$.getJSON("data/lavabos.geojson", function (data) {
-  lavabos.addData(data);
-});
-
-var boroughs = L.geoJson(null, {
-  style: function (feature) {
-    return {
-      color: "black",
-      fill: false,
-      opacity: 1,
-      clickable: false
-    };
-  },
-  onEachFeature: function (feature, layer) {
-    boroughSearch.push({
-      name: layer.feature.properties.BoroName,
-      source: "Boroughs",
-      id: L.stamp(layer),
-      bounds: layer.getBounds()
-    });
-  }
-});
-$.getJSON("data/boroughs.geojson", function (data) {
-  boroughs.addData(data);
-});
-
 
 //Create a color dictionary based off of subway route_id
 var subwayColors = {"1":"#ff3135", "2":"#ff3135", "3":"ff3135", "4":"#009b2e",
@@ -343,8 +307,8 @@ $.getJSON("data/DOITT_MUSEUM_01_13SEPT2010.geojson", function (data) {
 });
 
 map = L.map("map", {
-  zoom: 14,
-  center: [41.541637, 2.437576],
+  zoom: 10,
+  center: [40.702222, -73.979378],
   layers: [cartoLight, boroughs, markerClusters, highlight],
   zoomControl: false,
   attributionControl: false
@@ -397,10 +361,47 @@ map.on("layerremove", updateAttribution);
 var attributionControl = L.control({
   position: "bottomright"
 });
-
+attributionControl.onAdd = function (map) {
+  var div = L.DomUtil.create("div", "leaflet-control-attribution");
+  div.innerHTML = "<span class='hidden-xs'>Developed by <a href='http://bryanmcbride.com'>bryanmcbride.com</a> | </span><a href='#' onclick='$(\"#attributionModal\").modal(\"show\"); return false;'>Attribution</a>";
+  return div;
+};
+map.addControl(attributionControl);
 
 var zoomControl = L.control.zoom({
   position: "bottomright"
+}).addTo(map);
+
+/* GPS enabled geolocation control set to follow the user's location */
+var locateControl = L.control.locate({
+  position: "bottomright",
+  drawCircle: true,
+  follow: true,
+  setView: true,
+  keepCurrentZoomLevel: true,
+  markerStyle: {
+    weight: 1,
+    opacity: 0.8,
+    fillOpacity: 0.8
+  },
+  circleStyle: {
+    weight: 1,
+    clickable: false
+  },
+  icon: "fa fa-location-arrow",
+  metric: false,
+  strings: {
+    title: "My location",
+    popup: "You are within {distance} {unit} from this point",
+    outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
+  },
+  locateOptions: {
+    maxZoom: 18,
+    watch: true,
+    enableHighAccuracy: true,
+    maximumAge: 10000,
+    timeout: 10000
+  }
 }).addTo(map);
 
 /* Larger screens get expanded layer control and visible sidebar */
@@ -410,6 +411,10 @@ if (document.body.clientWidth <= 767) {
   var isCollapsed = false;
 }
 
+var baseLayers = {
+  "Street Map": cartoLight,
+  "Aerial Imagery": usgsImagery
+};
 
 var groupedOverlays = {
   "Points of Interest": {
@@ -488,7 +493,7 @@ $(document).one("ajaxStop", function () {
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     remote: {
-      url: "https://master.apis.dev.openstreetmap.org/",
+      url: "http://api.geonames.org/searchJSON?username=bootleaf&featureClass=P&maxRows=5&countryCode=US&name_startsWith=%QUERY",
       filter: function (data) {
         return $.map(data.geonames, function (result) {
           return {
